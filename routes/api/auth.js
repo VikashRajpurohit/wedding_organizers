@@ -6,6 +6,7 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { check, validationResult } = require('express-validator/check');
+const cors = require("cors");
 
 //@route    Get api/auth
 //@desc     Test Route
@@ -24,14 +25,16 @@ router.get('/', auth,async (req,res) => {
 //@desc     Authenticate user & get token
 //@access   public
 
-router.post('/', [
+router.post('/',cors(), [
      check('username', 'Include a valid e-mail').isEmail(),
     check('password', 'Password muast be minimum 6 charactors').isLength({ min: 6 })
 ],
 async (req, res) => {
 
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.log("def");
         return res.status(400).json({ errors: errors.array() });
     }
     else {
@@ -48,7 +51,7 @@ async (req, res) => {
          const isMatch =await bcrypt.compare(password,user.password);
 
          if(!isMatch){
-            res.status(400).json({errors: [{msg: 'incorrect password'}] }); 
+            return res.status(400).json({errors: [{msg: 'incorrect password'}] }); 
          }
 
             const payload = {
@@ -61,6 +64,8 @@ async (req, res) => {
             {expiresIn: 360000},
             (err,token)=>{
                // if(err)throw err;
+               
+               console.log(username+" $ "+password)
                     res.json({token});
             });
 

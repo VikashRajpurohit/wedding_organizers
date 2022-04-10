@@ -17,36 +17,29 @@ const UserSchema = new mongoose.Schema({
         type : String,
         required : true
     },
-    email : {
-        type: String,
-        required: true
-    },
-    address : {
-        street :{
+         address_street :{
             type : String,
             required : true
         },
-        landmark :{
+        address_landmark :{
             type : String,
             required : true
         },
-        city :{
+        address_city :{
             type : String,
-            required : true
+            //required : true
         },
-        state :{
+        address_state :{
             type : String,
-            required : true
+            //required : true
         },
-        pincode:{
+        address_pincode:{
             type : String,
-            required : true
-        }
-
-    },
+            //required : true
+        },
+   
     subcaste : {
         type : String,
-        required : true
     },
     d_o_b : {
         type : String,

@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const gravatar = require("gravatar");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
 const { check, validationResult } = require("express-validator/check");
 
-//Customer Registration Model
+//landlord Registration Model
 const cust_reg = require("../../models/cust_reg");
 
-//@route POST api/customer_registration
-//@desc Register Customer
+//@route POST api/cust_registration
+//@desc Register landlord
 //@access Public
 
 router.post(
@@ -39,25 +39,23 @@ router.post(
         state: req.body.DDState,
         Identification_proof_type: req.body.Identification_Proof_Type,
         Identification_proof: req.body.Identification_Proof,
+        usertype: "C",
         password: await bcrypt.hash(req.body.password, salt),
       });
 
       try {
         console.log(user);
-        //See if User exits
+        // See if User exits
         let cust = await cust_reg.findOne({ email: req.body.email });
         let con = await cust_reg.findOne({ contact: req.body.contact });
 
         if (cust) {
-          return res
-            .status(400)
-            .json({ errors: [{ msg: "User alraedy exists" }] });
+          res.status(404).json("User alraedy exists");
+          return;
         }
         if (con) {
-          console.error(con);
-          return res
-            .status(400)
-            .json({ errors: [{ msg: "contact alraedy exists" }] });
+          res.status(404).json("contact alraedy exists");
+          return;
         }
 
         //get Users gravatar

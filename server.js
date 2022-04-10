@@ -1,13 +1,37 @@
 const express=require('express');
 const connectDB=require('./config/db');
-
+const cors = require('cors');
+const session = require("express-session");
 const app = express();
+const cookieParer = require('cookie-parser'); 
+const bodyParser = require('body-parser');
 
 //Database Check
 connectDB();
 
 //Init Middleware
 app.use(express.json({ extended: false }));
+const oneDay = 1000 * 60 * 60 * 24;
+app.use(
+    session({
+    key:"userId",
+    secret: "abcdefghijklmno",
+    saveUninitialized:false,
+    cookie: { maxAge: oneDay },
+    resave: false 
+    })
+  );
+
+
+app.use(cors({
+  origin: ["http://localhost:3000"],
+  methods: ["GET","POST"],
+  credentials: true
+}
+));
+
+app.use(cookieParer());
+app.use(bodyParser.urlencoded({extended: true}));
 
 //Api Check
 app.get('/',(req,res)=> res.send("APi running"));
@@ -24,6 +48,7 @@ app.use('/api/org',require('./routes/api/org'));
 app.use('/api/sendmail',require('./routes/api/sendmail'));
 app.use('/api/package',require('./routes/api/package'));
 app.use('/api/payment',require('./routes/api/payment'));
+app.use('/api/otp',require('./routes/api/email'));
 
 const PORT = process.env.PORT || 5000;
 
