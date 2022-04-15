@@ -20,10 +20,11 @@ async (req,res) =>{
         return  res.status(400).json({errors : errors.array()});
     }    
 
-        const {servicecategories} = req.body;
+        const {servicecategories,perperson,searchable} = req.body;
+        console.log(req.body)
         try{
 
-        let service = new Serv_mst({servicecategories});
+        let service = new Serv_mst({servicecategories,perperson,searchable});
 
         await service.save();
         const payload = {
@@ -68,7 +69,9 @@ router.delete('/',async (req,res) =>{
     router.get('/',async (req,res) => {
     try {
         const user = await Serv_mst.find();
-        res.json(user);
+        //res.send(user);
+        console.log("Abcd");
+        res.send(user);
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Server Error...');    

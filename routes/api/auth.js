@@ -25,7 +25,7 @@ router.get('/', auth,async (req,res) => {
 //@desc     Authenticate user & get token
 //@access   public
 
-router.post('/',cors(), [
+router.post('/', [
      check('username', 'Include a valid e-mail').isEmail(),
     check('password', 'Password muast be minimum 6 charactors').isLength({ min: 6 })
 ],
@@ -34,8 +34,8 @@ async (req, res) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log("def");
-        return res.status(400).json({ errors: errors.array() });
+        
+        return res.status(400).json("abcd");
     }
     else {
         const {username,password} = req.body;
@@ -45,13 +45,13 @@ async (req, res) => {
             
             if (!user)
             {
-               return res.status(400).json({errors: [{msg: 'invalid crea'}] });
+               return res.status(400).send("invalid cradenitials");
             }
 
          const isMatch =await bcrypt.compare(password,user.password);
 
          if(!isMatch){
-            return res.status(400).json({errors: [{msg: 'incorrect password'}] }); 
+            return res.status(400).send('Incorrect password'); 
          }
 
             const payload = {
@@ -60,13 +60,15 @@ async (req, res) => {
                 } 
             }
 
+               
             jwt.sign(payload, config.get('jwtSecret'),
             {expiresIn: 360000},
             (err,token)=>{
                // if(err)throw err;
-               
-               console.log(username+" $ "+password)
-                    res.json({token});
+               res.cookie("id",token);
+               res.cookie("role",user.role)
+               let r=user.role
+                return res.status(210).json({token,r});
             });
 
            

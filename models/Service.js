@@ -5,6 +5,10 @@ const Service_schema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Serv_type',
     },
+    img:
+    {
+       type: String
+    },
     sname: {
         type: String,
         require: true

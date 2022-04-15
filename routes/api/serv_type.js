@@ -6,8 +6,9 @@ const jwt = require('jsonwebtoken');
 const Serv_type = require('../../models/Serv_type');
 const auth = require('../../middleware/auth');
 const servid = require('../../middleware/service');
+var mongoose = require('mongoose');
 
-router.post('/',servid, [
+router.post('/', [
     check ('servicetype','Service type is required').not().isEmpty()
 ],
 
@@ -20,11 +21,13 @@ async (req,res) =>{
         return  res.status(400).json({errors : errors.array()});
     }
     
-    const {servicetype} = req.body;
+    const {servicetype,smid} = req.body;
+    console.log(req.body);
     try{
 
-    let service = new Serv_type({servicetype});
-        service.smid=req.service.id;
+    let service = new Serv_type({servicetype,smid});
+       service.smid=mongoose.Types.ObjectId(smid); 
+        
     await service.save();
     const payload = {
         service:{
@@ -82,7 +85,18 @@ router.get('/',async (req,res) => {
             console.error(error.message);
             res.status(500).send('Server Error...');    
         }});
-    
+
+
+    router.post('/getss',async (req,res) => {
+            try {
+                const user = await Serv_type.find({"smid":req.body.s_mid});
+                res.json(user);
+            } catch (error) {
+                console.error(error.message);
+                res.status(500).send('Server Error...');    
+            }});
+        
+           
 
 
 module.exports = router;

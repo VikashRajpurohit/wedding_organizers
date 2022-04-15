@@ -11,7 +11,7 @@ const Serv_schema = new mongoose.Schema({
         default : 0
     },
     perperson: {
-        type : Number,
+        type : String,
         default : 0
 
     },

@@ -1,4 +1,6 @@
 {
     "mongoUrl": "mongodb://localhost:27017/wedd_org",
-    "jwtSecret": "mysecrettoken"
+    "jwtSecret": "mysecrettoken",
+    "FILE_UPLOAD_PATH":"../public/uploads",
+    "MAX_FILE_UPLOAD":1000000
 }

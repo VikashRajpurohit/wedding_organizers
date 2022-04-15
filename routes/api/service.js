@@ -24,18 +24,50 @@ async (req,res) =>{
         return  res.status(400).json({errors : errors.array()});
     }    
 
+    
+    if (!req.files) {
+        console.log(req.files);
+        return res.send(`Please Upload a file`);
+      
+    }
+  
+    const file = req.files.file;
+    console.log("photoname " + file.name);
+    console.log(req.body.sname)
+  
+    //Make sure the image is a photo
+    if (!file.mimetype.startsWith("image")) {
+      return res.send("Please upload an image");
+    }
+  
+    //Check file size
+    if (file.size > process.env.MAX_FILE_UPLOAD) {
+      return res.send("Please upload an image less than" +process.env.MAX_FILE_UPLOAD )
+      
+    }
+  
+    //Create Custom filename
+    file.mv(`${"./public/uploads"}/${file.name}`, async (err) => {
+      if (err) {
+        console.error(err);
+        return res.send("File Upload Problem");
+      }
+    });
+
     const {
         stid,
         sname,
+        img,
         sfees,
         slocation,
         sdescription
     }=req.body;
 
     
-    let service = new Service({stid,sname,sfees,slocation,sdescription});
+    let service = new Service({stid,sname,sfees,img,slocation,sdescription});
     service.sdescription = sdescription.split(",");
     service.stid=req.service.id;
+    service.img=file.name
  
     await service.save();
 
@@ -177,6 +209,24 @@ router.get('/',async (req,res) => {
         res.status(500).send('Server Error...');    
     }});
 
+
+    router.post('/img',
+    async (req,res) => {
+        
+        })
+      
+        //   const post = new JP_Normal_Post({
+        //     : req.body.company_id,
+        //     description: req.body.description,
+        //     photo: file.name
+        //   });
+      
+        //   post
+        //   .save()
+        //   .then(() => res.json("New Post Added"))
+        //   .catch((err) => res.status(400).json(`Error: ${err}`));
+        // }
+    
 
 
 module.exports = router;

@@ -17,7 +17,7 @@ const cors = require("cors");
 //@desc     Register User
 //@access   public
 
-router.post('/',cors(),
+router.post('/',
 async (req, res) => {
     var session;
     const errors = validationResult(req);
@@ -26,13 +26,11 @@ async (req, res) => {
     }
     else {
         
-        session=req.session;
-        
-        console.log(session);
+        console.log(req.cookies.otps);
+        console.log(req.body.otp);
 
-        console.log(req.cookies);
-        
-        const {fname,lname,contact,address_street,address_landmark,address_city,address_state,address_pincode,subcaste,d_o_b,password,username,} = req.body;
+        if((req.cookies.otps)==(req.body.otp)){ 
+            const {fname,lname,contact,address_street,address_landmark,address_city,address_state,address_pincode,subcaste,d_o_b,password,username,} = req.body;
 
         try {
 
@@ -72,7 +70,7 @@ async (req, res) => {
 
             const salt = await bcrypt.genSalt(10);
             user.password = await bcrypt.hash(password,salt);
-           // await user.save();
+            await user.save();
 
             const payload = {
                 user:{
@@ -84,14 +82,22 @@ async (req, res) => {
             {expiresIn: 360000},
             (err,token)=>{
                // if(err)throw err;
-                    res.json({token});
+                    console.log(token)
+                    return res.status(210).json(token);
+                    
             });
 
            
         } catch (error) {
            console.error(error.message);
            res.status(500).send('Server error....'); 
+        }}
+        else{
+            res.send("Incorrect Otp");
+            console.log("Incorrct Otp");
         }
+
+       
     }
     
 });
@@ -176,7 +182,7 @@ router.post('/update',auth,
             let st = ""
             let city = ""
             let country = ""
-            geoCoder.geocode(req.body.code)
+            geoCoder.geocode(req.body.address_pincode)
             .then((abc)=> {
                 abc.forEach(function(temp){
                     const tempsid = temp.formattedAddress.split(",");  

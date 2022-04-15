@@ -5,6 +5,12 @@ const router = express.Router();
 //@desc     Test Route
 //@access   public
 
-router.get('/',(req,res) => res.send("Post route...."));
+router.get('/',async (req, res) => {
+
+console.log(req.cookies.otps);
+});
+
+
+
 
 module.exports = router;
